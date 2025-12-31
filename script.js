@@ -4,7 +4,7 @@ let rockets = [];
 let particles = [];
 let autoFire = false;
 
-// 1. Create an array of 8 images
+
 const imageNames = [
   'eli01.png', 
   'eli02.png', 
@@ -16,7 +16,7 @@ const imageNames = [
   'eli08.png'
 ];
 
-// Pre-load all 8 images into an array of Image objects
+
 const loadedImages = imageNames.map(name => {
   const img = new Image();
   img.src = `assets/${name}`;
@@ -108,7 +108,7 @@ class Rocket {
   explode() {
     const chance = Math.random();
     if (chance < 0.3) {
-      // Pick a random image from our loaded 8 images
+      
       const randomImg = loadedImages[Math.floor(Math.random() * loadedImages.length)];
       for(let i=0; i<6; i++) {
         particles.push(new Particle(this.x, this.y, this.color, null, randomImg));
