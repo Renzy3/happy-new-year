@@ -94,13 +94,18 @@ canvas {
 
 #note-trigger { 
   position: absolute; 
-  bottom: 30px; 
-  right: 30px; 
+  bottom: 80px; 
+  right: 20px; 
   background: white; 
-  padding: 12px 25px; 
+  padding: 10px 20px; 
   border-radius: 30px; 
   cursor: pointer; 
-  font-weight: bold; 
+  font-weight: bold;
+  z-index: 20;
+  font-size: 14px;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
 }
 
 #popup {
@@ -123,6 +128,14 @@ canvas {
   flex-direction: column;
   border-radius: 20px;
   box-shadow: 0 0 40px rgba(0, 0, 0, 0.5);
+}
+
+@media (max-width: 480px) {
+  #note-trigger {
+    bottom: 100px;
+    right: 15px;
+    padding: 8px 16px;
+  }
 }
 
 .header-row { display: flex; justify-content: space-between; font-size: 12px; color: #4e342e; font-weight: bold; margin-bottom: 30px; }
