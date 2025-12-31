@@ -4,8 +4,26 @@ let rockets = [];
 let particles = [];
 let autoFire = false;
 
-const popImg = new Image();
-popImg.src = 'assets/hpy.jpg'; 
+// 1. Create an array of 8 images
+const imageNames = [
+  'eli01.png', 
+  'eli02.png', 
+  'eli03.png', 
+  'eli04.png', 
+  'eli05.png', 
+  'eli06.png', 
+  'eli07.png', 
+  'eli08.png'
+];
+
+// Pre-load all 8 images into an array of Image objects
+const loadedImages = imageNames.map(name => {
+  const img = new Image();
+  img.src = `assets/${name}`;
+  return img;
+});
+
+const music = document.getElementById("music");
 
 function resize() {
   canvas.width = window.innerWidth;
@@ -15,27 +33,29 @@ window.onresize = resize;
 resize();
 
 class Particle {
-  constructor(x, y, color, text = null, isImage = false) {
+  constructor(x, y, color, text = null, imgObject = null) {
     this.x = x;
     this.y = y;
     this.text = text;
-    this.isImage = isImage;
+    this.imgObject = imgObject; // Stores the specific image for this particle
     this.color = color;
     this.alpha = 1;
     this.velocity = {
-      x: (Math.random() - 0.5) * (text || isImage ? 5 : 18),
-      y: (Math.random() - 0.5) * (text || isImage ? 5 : 18)
+      x: (Math.random() - 0.5) * (text || imgObject ? 5 : 18),
+      y: (Math.random() - 0.5) * (text || imgObject ? 5 : 18)
     };
-    this.gravity = (text || isImage) ? 0.02 : 0.2;
+    this.gravity = (text || imgObject) ? 0.02 : 0.2;
     this.friction = 0.96;
   }
 
   draw() {
     ctx.save();
     ctx.globalAlpha = this.alpha;
-    if (this.isImage && popImg.complete) {
+    
+    // Draw the randomly selected image if it is loaded
+    if (this.imgObject && this.imgObject.complete && this.imgObject.naturalWidth !== 0) {
       const size = 80; 
-      ctx.drawImage(popImg, this.x - size/2, this.y - size/2, size, size);
+      ctx.drawImage(this.imgObject, this.x - size/2, this.y - size/2, size, size);
     } else if (this.text) {
       ctx.font = "bold 45px Segoe UI";
       ctx.fillStyle = this.color;
@@ -88,14 +108,15 @@ class Rocket {
   explode() {
     const chance = Math.random();
     if (chance < 0.3) {
-      
-      for(let i=0; i<6; i++) particles.push(new Particle(this.x, this.y, this.color, null, true));
+      // Pick a random image from our loaded 8 images
+      const randomImg = loadedImages[Math.floor(Math.random() * loadedImages.length)];
+      for(let i=0; i<6; i++) {
+        particles.push(new Particle(this.x, this.y, this.color, null, randomImg));
+      }
     } else if (chance < 0.6) {
-      // Text Pop
       const txt = Math.random() > 0.5 ? "2026" : "HAPPY NEW YEAR";
       particles.push(new Particle(this.x, this.y, this.color, txt));
     } else {
-      
       for (let i = 0; i < 100; i++) particles.push(new Particle(this.x, this.y, this.color));
     }
   }
@@ -121,16 +142,14 @@ const finalUI = document.getElementById("new-year-2026");
 
 clickBtn.onclick = (e) => {
   mainUI.classList.add("hidden"); 
-  finalUI.classList.add("show-final"); 
+  finalUI.classList.add("show-final");
   autoFire = true; 
-  
-
-  music.volume = 0.2; 
-  
+  if (music) {
+    music.volume = 0.2; 
+    music.play().catch(() => {});
+  }
   rockets.push(new Rocket(e.clientX, e.clientY));
-  music.play().catch(() => {});
 };
-
 
 document.getElementById("note-trigger").onclick = () => document.getElementById("popup").style.display = "flex";
 document.getElementById("close-popup").onclick = () => document.getElementById("popup").style.display = "none";
